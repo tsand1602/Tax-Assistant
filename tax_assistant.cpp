@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <cstdlib>
 #include <ctime>
 #include <curl/curl.h>  // Include libcurl
@@ -121,7 +121,7 @@ public:
 
 class government {
 protected:
-    map<string, Pan> earning_people; // string datatype is used for PAN ID
+    unordered_map<string, Pan> earning_people; // string datatype is used for PAN ID
     long long treasury;
 public:
     government() : treasury(0) {}
