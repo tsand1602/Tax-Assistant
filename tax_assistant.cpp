@@ -86,7 +86,11 @@ public:
     company* getcompany() const { return employer; } // Returns company
     Pan getPan() const { return individual_pan; } // Returns pan card of the person
     string getPhoneNumber() const { return phone_number; } // Returns phone number of the person
-    long long getIncome(int category) const { return income[category]; } // Gets the income of the person in a particular category
+    long long getIncome(int category) const { 
+        if (category >= 0 && category < income.size())
+            return income[category]; // Gets the income of the person in a particular category
+        return 0;
+    }
     vector<long long> getIncomeVector() const { return income; } //returns the full vector
     void get_certificate() { is_Certificate_issued = true; } // Person gets TDS Certificate after Company deducts TDS
     bool certificate_already_issued() const { return is_Certificate_issued; } // Checks if TDS Certificate is already issued
