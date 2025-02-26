@@ -49,17 +49,17 @@ class Pan {
     string name; // Name in the Pan Card
     string father_name; // Father's Name in the Pan card
     string DOB; // Date of Birth mentioned
-    long long phone_number; // Phone number mentioned
+    string phone_number; // Phone number mentioned
 public:
     // Constructor for PAN
-    Pan(string Pan_number, string name, string father_name, string DOB, long long phone_number) : Pan_number(Pan_number), name(name), father_name(father_name), DOB(DOB), phone_number(phone_number) {}
+    Pan(string Pan_number, string name, string father_name, string DOB, string phone_number) : Pan_number(Pan_number), name(name), father_name(father_name), DOB(DOB), phone_number(phone_number) {}
     // Getter functions
     string getPanNumber() const { return Pan_number; }
     string getname() const { return name; }
     string getfatherName() const { return father_name; }
     string getDOB() const { return DOB; }
     char getEntity() const { return Pan_number[3]; } // Entity is a person or company/organisation
-    long long getphoneNumber() const { return phone_number; }
+    string getphoneNumber() const { return phone_number; }
 
     /*
     Setter functions are implemented when user wants to change his/her PAN card details
@@ -76,16 +76,16 @@ class company;
 class person {
     vector<long long> income; // several categories of income earned by the person, if no income in a particular category, then 0
     // Salaried income is type 0
-    long long phone_number; // Phone number of individual
+    string phone_number; // Phone number of individual
     Pan individual_pan; // Pan Card
     company* employer; // Company in which he/she works
     bool is_Certificate_issued; // Checks if TDS Certificate is already issued
 public:
     // Constructor for person
-    person(vector<long long> income, Pan issuedPan, company* employer, long long phone_number) : income(income), individual_pan(issuedPan), employer(employer), phone_number(phone_number), is_Certificate_issued(false) {}
+    person(vector<long long> income, Pan issuedPan, company* employer, string phone_number) : income(income), individual_pan(issuedPan), employer(employer), phone_number(phone_number), is_Certificate_issued(false) {}
     company* getcompany() const { return employer; } // Returns company
     Pan getPan() const { return individual_pan; } // Returns pan card of the person
-    long long getPhoneNumber() const { return phone_number; } // Returns phone number of the person
+    string getPhoneNumber() const { return phone_number; } // Returns phone number of the person
     long long getIncome(int category) const { return income[category]; } // Gets the income of the person in a particular category
     vector<long long> getIncomeVector() const { return income; } //returns the full vector
     void get_certificate() { is_Certificate_issued = true; } // Person gets TDS Certificate after Company deducts TDS
@@ -108,7 +108,7 @@ public:
     They take the phone number claimed by the employee and check if it is the same in the PAN card
     They also check the 4th digit to prevent malpractice
     */
-    bool check_PanDetails(const Pan& user, long long phone_number, char actual_entity) const {
+    bool check_PanDetails(const Pan& user, string phone_number, char actual_entity) const {
         if (user.getEntity() == actual_entity && user.getphoneNumber() == phone_number)
             return true;
         return false;
@@ -128,7 +128,7 @@ public:
       srand(time(0)); 
     }
     // Creates a new PAN card when an user applies for it
-    Pan add_pan(char entity, string name, string surname, string father_name, string DOB, long long phone_number) {
+    Pan add_pan(char entity, string name, string surname, string father_name, string DOB, string phone_number) {
         string pan_id;
         do  {
             pan_id.clear();
