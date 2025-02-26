@@ -136,7 +136,10 @@ public:
                 pan_id.push_back('A' + rand() % 26); // Generating first three digits in pan id
             }
             pan_id.push_back(entity); // setting 4th digit as entity
-            pan_id.push_back(surname[0]); // 5th digit as first letter of surname
+            if (surname.length() != 0)
+                pan_id.push_back(surname[0]); // 5th digit as first letter of surname
+            else
+                pan_id.push_back(name[0]); // 5th digit as first letter of name
             for (int i = 0; i < 5; i++) {
                 pan_id.push_back('0' + rand() % 10); // setting last 3 digits in pan id
             }
@@ -314,19 +317,17 @@ int main() {
     government Government;
     Assistant tax_assistant;
 
-    // Create a config.json file (see below)
-
-    Pan companyPan("ABCDE1234F", "MyCompany", "FounderName", "01/01/1990", 9876543210);
+    Pan companyPan("ABCDE1234F", "MyCompany", "FounderName", "01/01/1990", "9876543210");
     company MyCompany(companyPan);
 
-    Pan person1Pan = Government.add_pan('P', "John", "Doe", "FatherDoe", "02/02/1980", 1234567890);
-    Pan person2Pan = Government.add_pan('P', "Jane", "Smith", "FatherSmith", "03/03/1995", 9087654321);
+    Pan person1Pan = Government.add_pan('P', "John", "Doe", "FatherDoe", "02/02/1980", "1234567890");
+    Pan person2Pan = Government.add_pan('P', "Jane", "Smith", "FatherSmith", "03/03/1995", "9087654321");
 
     vector<long long> income1 = { 100000, 0, 0, 0, 0 };
     vector<long long> income2 = { 200000, 0, 0, 0, 0 };
 
-    person person1(income1, person1Pan, &MyCompany, 1234567890);
-    person person2(income2, person2Pan, &MyCompany, 9087654321);
+    person person1(income1, person1Pan, &MyCompany, "1234567890");
+    person person2(income2, person2Pan, &MyCompany, "9087654321");
 
     MyCompany.addEmployee(person1);
     MyCompany.addEmployee(person2);
