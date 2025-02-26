@@ -124,21 +124,23 @@ protected:
     unordered_map<string, Pan> earning_people; // string datatype is used for PAN ID
     long long treasury;
 public:
-    government() : treasury(0) {}
-
+    government() : treasury(0) {
+      srand(time(0)); 
+    }
     // Creates a new PAN card when an user applies for it
     Pan add_pan(char entity, string name, string surname, string father_name, string DOB, long long phone_number) {
         string pan_id;
-        srand(time(0));
-
-        for (int i = 0; i < 3; i++) {
-            pan_id.push_back('A' + rand() % 26); // Generating first three digits in pan id
-        }
-        pan_id.push_back(entity); // setting 4th digit as entity
-        pan_id.push_back(surname[0]); // 5th digit as first letter of surname
-        for (int i = 0; i < 5; i++) {
-            pan_id.push_back('0' + rand() % 10); // setting last 3 digits in pan id
-        }
+        do  {
+            pan_id.clear();
+            for (int i = 0; i < 3; i++) {
+                pan_id.push_back('A' + rand() % 26); // Generating first three digits in pan id
+            }
+            pan_id.push_back(entity); // setting 4th digit as entity
+            pan_id.push_back(surname[0]); // 5th digit as first letter of surname
+            for (int i = 0; i < 5; i++) {
+                pan_id.push_back('0' + rand() % 10); // setting last 3 digits in pan id
+            }
+        } while (earning_people.find(pan_id) != earning_people.end());
         Pan newPan(pan_id, name + " " + surname, father_name, DOB, phone_number);
         earning_people.insert({ pan_id,newPan });
         return newPan;
