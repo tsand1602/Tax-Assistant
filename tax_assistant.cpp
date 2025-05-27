@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <curl/curl.h>  // Include libcurl
-#include <nlohmann/json.hpp> // JSON library
+#include <json.hpp> // JSON library
 #include <fstream> // For file reading/writing
 
 using json = nlohmann::json; //Define json for the library
@@ -243,6 +243,7 @@ public:
             return response_string;
         }
         curl_global_cleanup();
+        return ""; // or "API call failed" or any default string
     }
 
     // New: Dedicated function to calculate income tax using the ClearTax API
