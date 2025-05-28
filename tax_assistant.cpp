@@ -21,15 +21,16 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, string* output) 
 class Pan {
     string Pan_number;
     string name;
-    string father_name;
+    string surname;
     string DOB;
     string phone_number;
 public:
-    Pan(string Pan_number, string name, string father_name, string DOB, string phone_number)
-        : Pan_number(Pan_number), name(name), father_name(father_name), DOB(DOB), phone_number(phone_number) {}
+    Pan() {}
+    Pan(string Pan_number, string name, string surname, string DOB, string phone_number)
+        : Pan_number(Pan_number), name(name), surname(surname), DOB(DOB), phone_number(phone_number) {}
     string getPanNumber() const { return Pan_number; }
     string getname() const { return name; }
-    string getfatherName() const { return father_name; }
+    string getSurname() const { return surname; }
     string getDOB() const { return DOB; }
     char getEntity() const { return Pan_number[3]; }
     string getphoneNumber() const { return phone_number; }
@@ -46,8 +47,11 @@ class person {
     string us_state;
     string filing_status;
 public:
-    person(vector<long long> income, Pan issuedPan, company* employer, string phone_number, const string& state, const string& filing_status)
-        : income(income), individual_pan(issuedPan), employer(employer), phone_number(phone_number), is_Certificate_issued(false), us_state(state), filing_status(filing_status) {}
+    person(vector<long long> income, company* employer, string phone_number, const string& state, const string& filing_status)
+        : income(income), employer(employer), phone_number(phone_number), is_Certificate_issued(false), us_state(state), filing_status(filing_status) {}
+    void allot_PAN(Pan PAN) {
+        individual_pan = PAN;
+    }
     company* getcompany() const { return employer; }
     Pan getPan() const { return individual_pan; }
     string getPhoneNumber() const { return phone_number; }
@@ -78,32 +82,39 @@ public:
     void issue_certificate(person& employee) {
         employee.get_certificate();
     }
+    string getName() {
+        return company_pan.getname();
+    }
 };
 
 class government {
 protected:
     unordered_map<string, Pan> earning_people;
+    unordered_map<string, Pan> companies;
     long long treasury;
 public:
     government() : treasury(0) { srand(time(0)); }
-    Pan add_pan(char entity, string name, string surname, string father_name, string DOB, string phone_number) {
+    Pan add_pan(char entity, string name, string surname, string DOB, string phone_number) {
         string pan_id;
-        do  {
+        int attempt = 0, max_attempts = 10000;
+        do {
             pan_id.clear();
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++) 
                 pan_id.push_back('A' + rand() % 26);
-            }
             pan_id.push_back(entity);
-            if (surname.length() != 0)
-                pan_id.push_back(surname[0]);
-            else
-                pan_id.push_back(name[0]);
-            for (int i = 0; i < 5; i++) {
+            pan_id.push_back(!surname.empty() ? surname[0] : name[0]);
+            for (int i = 0; i < 5; i++) 
                 pan_id.push_back('0' + rand() % 10);
-            }
-        } while (earning_people.find(pan_id) != earning_people.end());
-        Pan newPan(pan_id, name + " " + surname, father_name, DOB, phone_number);
-        earning_people.insert({ pan_id,newPan });
+            attempt++;
+            if (attempt > max_attempts)
+                throw std::runtime_error("PAN generation failed: too many attempts.");
+        } while (earning_people.find(pan_id) != earning_people.end() || companies.find(pan_id) != companies.end());
+
+        Pan newPan(pan_id, name, surname, DOB, phone_number);
+        if (entity == 'P')
+            earning_people.emplace(pan_id, newPan);
+        else if (entity == 'E')
+            companies.emplace(pan_id, newPan);
         return newPan;
     }
     void accept_TDS(long long TDS) {
@@ -115,7 +126,6 @@ public:
 };
 
 class Assistant {
-public:
     string loadApiNinjasKey(const string& config_filename = "config.json") {
         std::ifstream configFile(config_filename);
         if (!configFile.is_open()) {
@@ -178,7 +188,7 @@ public:
             return response_string;
         }
     }
-
+public:
     long long calculate_income_tax(const person& employee) {
         vector<long long> incomes = employee.getIncomeVector();
         long long total_income = 0;
@@ -202,7 +212,6 @@ public:
         long long tax_amount = 0;
         try {
             json response_json = json::parse(tax_response);
-            
             if (response_json.contains("federal_taxes_owed") && response_json["federal_taxes_owed"].is_number()) {
                 tax_amount += static_cast<long long>(response_json["federal_taxes_owed"].get<double>());
             }
@@ -226,11 +235,10 @@ public:
         }
         return tax_amount;
     }
-
     void Filing_Tax(government& Government, company& employer) {
-        cout << "Starting Tax Filing..." << endl;
+        cout << endl << "Starting Tax Filing for company " << employer.getName() << "..." << endl << endl;
         for (auto& employee : employer.employees) {
-            cout << "Processing: " << employee.getPan().getname() << endl;
+            cout << "Processing: " << employee.getPan().getname() << endl << endl;
             if (employee.certificate_already_issued()) {
                 cout << "TDS already Deducted from employee " << employee.getPan().getname() << endl;
                 continue;
@@ -242,42 +250,85 @@ public:
             }
             long long tax = calculate_income_tax(employee);
             Government.accept_TDS(tax);
-            cout << "TDS deducted for " << employee.getPan().getname() << ". Tax amount: " << tax << endl;
+            cout << endl << "TDS deducted for " << employee.getPan().getname() << ". Tax amount: " << tax << endl;
         }
-        cout << "Finished Tax Filing." << endl;
+        cout << endl << "Finished Tax Filing." << endl;
     }
 };
 
 int main() {
     government Government;
     Assistant tax_assistant;
+    map<string, company> companylist;
 
-    Pan companyPan("ABCDE1234F", "MyCompany", "FounderName", "01/01/1990", "9876543210");
-    company MyCompany(companyPan);
+    int no_of_companies, no_of_people;
+    cout << "Number of Companies : ";
+    cin >> no_of_companies;
+    string Pan_number, company_name, founder_name, date_of_starting, phone_number, name, surname, date_of_birth, state, filing_status;
 
-    Pan person1Pan = Government.add_pan('P', "John", "Doe", "FatherDoe", "02/02/1980", "1234567890");
-    Pan person2Pan = Government.add_pan('P', "Jane", "Smith", "FatherSmith", "03/03/1995", "9087654321");
+    for (int i = 1; i <= no_of_companies; i++) {
+        cout << "Company Name : ";
+        cin >> company_name;
+        cout << "Founder Name : ";
+        cin >> founder_name;
+        cout << "Date of Starting : ";
+        cin >> date_of_starting;
+        cout << "Phone Number : ";
+        cin >> phone_number;
 
-    vector<long long> income1 = { 100000, 0, 0, 0, 0 };
-    vector<long long> income2 = { 200000, 0, 0, 0, 0 };
+        Pan companyPan = Government.add_pan('E', company_name, founder_name, date_of_starting, phone_number);
+        company Company(companyPan);
+        companylist.emplace(company_name, Company);
+        cout << endl;
+    }
 
-    person person1(income1, person1Pan, &MyCompany, "1234567890", "CA", "single");
-    person person2(income2, person2Pan, &MyCompany, "9087654321", "NY", "head_of_household");
+    cout << "Number of People : ";
+    cin >> no_of_people;
+    vector<long long> income(5);
+    for (int i = 1; i <= no_of_people; i++) {
+        cout << "Name : ";
+        cin >> name;
+        cout << "Surname : ";
+        cin >> surname;
+        cout << "Company Name : ";
+        cin >> company_name;
+        cout << "Date of Birth : ";
+        cin >> date_of_starting;
+        cout << "Phone Number : ";
+        cin >> phone_number;
+        cout << "State : ";
+        cin >> state;
+        cout << "Filing Status : ";
+        cin >> filing_status;
+        cout << "Income : ";
+        for (int j = 0; j < 5; j++)
+            cin >> income[j];
+        auto it = companylist.find(company_name);
+        if (it == companylist.end()) {
+            cerr << "Error: Company " << company_name << " not found for employee " << name << endl;
+            continue;
+        }
+        person Person(income, &(it->second), phone_number, state, filing_status);
+        Pan personPan = Government.add_pan('P', name, surname, date_of_starting, phone_number);
+        Person.allot_PAN(personPan);
+        (it->second).addEmployee(Person);
+        cout << endl;
+    }
 
-    MyCompany.addEmployee(person1);
-    MyCompany.addEmployee(person2);
+    for (auto &[name, Company] : companylist)
+        tax_assistant.Filing_Tax(Government, Company);
 
-    tax_assistant.Filing_Tax(Government, MyCompany);
+    cout << endl << "Total treasury amount: " << Government.getTreasury() << endl;
 
-    cout << "Total treasury amount: " << Government.getTreasury() << endl;
-
-    string user_question_gemini; 
+    std::string user_question_gemini; 
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    
     while (true) {
-        cout << "\nAsk the Gemini tax LLM a question (type 'exit' to quit): ";
-        getline(std::cin, user_question_gemini);
+        std::cout << "\nAsk the Gemini tax LLM a question (type 'exit' to quit): ";
+        std::getline(std::cin, user_question_gemini);
     
         if (std::cin.eof()) { 
-            cout << "\nEOF detected. Exiting Gemini chat." << std::endl;
+            std::cout << "\nEOF detected. Exiting Gemini chat." << std::endl;
             break;
         }
         if (user_question_gemini.empty()) 
@@ -285,9 +336,8 @@ int main() {
         if (user_question_gemini == "exit" || user_question_gemini == "quit" || user_question_gemini == "q") 
             break;
     
-        string llm_answer = ask_gemini_tax_llm(user_question_gemini); 
-    
-        cout << "\nGemini LLM says:\n" << llm_answer << std::endl;
+        std::string llm_answer = ask_gemini_tax_llm(user_question_gemini); 
+        std::cout << "\nGemini LLM says:\n" << llm_answer << std::endl;
     }
     return 0;
 }
