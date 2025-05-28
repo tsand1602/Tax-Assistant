@@ -1,4 +1,4 @@
 {
-  "cleartax_api_key": "YOUR_CLEARTAX_API_KEY",
-  "cleartax_tds_endpoint": "https://your-cleartax-api-endpoint/calculate-tds"
+  "api_ninjas_key": "YOUR_API_NINJA_API",
+  "gemini_api_key": "YOUR_GEMINI_API"
 }
