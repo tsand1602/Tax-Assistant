@@ -23,7 +23,7 @@ Tax-Assistant is a C++ project for simulating an Income Tax Calculator system fe
 
 - C++17 or newer compiler (e.g., g++)
 - API keys from:
-  - [API Ninja](https://api-ninjas.com/)
+  - [API Ninja](https://api-ninjas.com/) (For Income Tax Calculator)
   - [Google Cloud Platform](https://console.cloud.google.com/) (for Gemini LLM)
 - Bundled cURL libraries and `cacert.pem` (already included in this repo)
 - Command prompt or any terminal
