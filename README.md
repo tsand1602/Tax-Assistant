@@ -8,7 +8,7 @@ Tax-Assistant is a C++ project for simulating an Income Tax Calculator system fe
 
 - **PAN Format Verification** (checks if a PAN ID matches the required format)
 - **Income Tax Calculation** (based on user/company input and US tax rules via API Ninja)
-- **AI Assistant Integration** (powered by Gemini LLM for intelligent assistance)
+- **AI Assistant Integration** (powered by Gemini LLM for intelligent assistance; answers only Indian tax-related queries)
 - **API Integration** (uses API Ninja for tax calculation, Gemini via Google Cloud Platform for AI)
 - **Secure HTTP requests** (via cURL and bundled `cacert.pem`)
 
@@ -17,7 +17,7 @@ Tax-Assistant is a C++ project for simulating an Income Tax Calculator system fe
 - Add companies and employees with details interactively
 - Check validity of PAN IDs by format (not by API)
 - Calculate income tax for each employee, based on state and filing status
-- Get AI-powered answers and guidance using Gemini LLM via Google Cloud Platform
+- Get AI-powered answers and guidance using Gemini LLM via Google Cloud Platform (answers only Indian tax-related queries)
 - Communicate securely with APIs using cURL
 
 ## Requirements
@@ -40,8 +40,9 @@ Tax-Assistant is a C++ project for simulating an Income Tax Calculator system fe
 
 2. **API Keys**
    - Sign up and get your API keys from:
-     - [API Ninja](https://api-ninjas.com/)
+     - [API Ninja](https://api-ninjas.com/) (**Be sure to get the key for the "Income Tax Calculator" API**)
      - [Google Cloud Platform](https://console.cloud.google.com/) (for Gemini LLM)
+   - Both API keys are free to obtain.
    - Add your API keys in `config.json` located in the project directory.  
      Refer to the code comments for the expected structure of `config.json`.
 
@@ -107,15 +108,15 @@ Here is how you will interact with the program:
    - The program will process the tax calculations for each employee and display results.
    - At the end, you can interactively ask questions to the Gemini AI Assistant:
      - You will see: `Ask the Gemini tax LLM a question (type 'exit' to quit):`
-     - Type your question or type `exit` to finish.
+     - Type your question (Indian tax-related queries only) or type `exit` to finish.
 
 **You do not need to remember the order of fields**; simply follow the prompts as displayed.
 
 ## Example Input/Session
 
----
+Below is a sample session to help you understand the interactive flow.
 
-Below is a sample session to help you understand the interactive flow:
+### Input
 
 ```plaintext
 Number of Companies : 2
@@ -147,7 +148,11 @@ Phone Number : 4445556666
 State : NY
 Filing Status : married
 Income : 90000 6000 3000 0 0
+```
 
+### Output
+
+```plaintext
 Starting Tax Filing for company AcmeCorp...
 
 Processing: John
@@ -167,11 +172,21 @@ TDS deducted for Jane. Tax amount: 20890
 Finished Tax Filing.
 
 Total treasury amount: 39010
+```
 
-Ask the Gemini tax LLM a question (type 'exit' to quit): What are common deductions for US employees?
+### Asking the AI Assistant
+
+After the tax filing output, you can interact with the AI assistant as follows:
+
+```plaintext
+Ask the Gemini tax LLM a question (type 'exit' to quit): What are the new slabs for Indian income tax in 2024?
 Gemini LLM says:
-Common deductions include 401(k) contributions, health insurance premiums, mortgage interest, and charitable donations.
+For FY 2023-24, the Indian income tax slabs are as follows...
+```
 
+> **Note:** The Gemini LLM will answer only Indian tax-related queries.
+
+```plaintext
 Ask the Gemini tax LLM a question (type 'exit' to quit): exit
 ```
 
