@@ -74,7 +74,7 @@ Follow the prompts to:
 
 ## Configuration
 
-- Place your API keys in the `config.json` file in the project directory (see code comments for the required format).
+- Place your API keys in the `config.json` file in the project directory.
 - No extra setup needed for cURL or `cacert.pem`—both are included.
 
 ---
