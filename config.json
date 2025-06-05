@@ -1,4 +1,4 @@
 {
-  "api_ninjas_key": "YOUR_API_NINJA_API",
-  "gemini_api_key": "YOUR_GEMINI_API"
+  "api_ninjas_key": "YOUR_API_NINJA_API", // Add your API-NINJA API within the quotation marks
+  "gemini_api_key": "YOUR_GEMINI_API"     // Add your Gemini API within the quotation marks
 }
