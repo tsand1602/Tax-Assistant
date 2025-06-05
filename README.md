@@ -7,15 +7,16 @@ A C++ Income Tax Calculator and PAN Verification tool with AI Assistant integrat
 Tax-Assistant is a C++ project for simulating an Income Tax Calculator system featuring:
 
 - **PAN Format Verification** (checks if a PAN ID matches the required format)
-- **Income Tax Calculation** (based on user input)
+- **Income Tax Calculation** (based on user/company input and US tax rules via API Ninja)
 - **AI Assistant Integration** (powered by Gemini LLM for intelligent assistance)
 - **API Integration** (uses API Ninja for tax calculation, Gemini via Google Cloud Platform for AI)
 - **Secure HTTP requests** (via cURL and bundled `cacert.pem`)
 
 ## Features
 
+- Add companies and employees with details interactively
 - Check validity of PAN IDs by format (not by API)
-- Calculate income tax based on provided details
+- Calculate income tax for each employee, based on state and filing status
 - Get AI-powered answers and guidance using Gemini LLM via Google Cloud Platform
 - Communicate securely with APIs using cURL
 
@@ -67,14 +68,115 @@ or (on Linux/Mac):
 ./tax_assistant
 ```
 
-Follow the prompts to:
-- Enter and verify PAN format
-- Input income details
-- Interact with the AI assistant
-
 ## Configuration
 
 - Place your API keys in the `config.json` file in the project directory.
 - No extra setup needed for cURL or `cacert.pem`—both are included.
+
+## Input Flow and Prompts
+
+**The program is fully interactive** and will guide you step-by-step, prompting you for each required input.  
+The helper lines and prompts are printed directly to the terminal, indicating exactly what information you need to enter at each step.
+
+Here is how you will interact with the program:
+
+1. **Company Details**  
+   You will be prompted for the following information for each company:
+   - `Number of Companies :` — Enter the total number of companies you want to add.
+   - For each company:
+     - `Company Name :` — Enter the company's name.
+     - `Founder Name :` — Enter the name of the company's founder.
+     - `Date of Starting :` — Enter the starting date (format as you wish, e.g., YYYY-MM-DD).
+     - `Phone Number :` — Enter the company's phone number.
+
+2. **Employee Details**  
+   After companies, you will be prompted for employee details:
+   - `Number of People :` — Enter the total number of employees.
+   - For each employee:
+     - `Name :` — Enter the employee's first name.
+     - `Surname :` — Enter the employee's surname.
+     - `Company Name :` — Enter the name of the company the employee works for (must match a company entered above).
+     - `Date of Birth :` — Enter the employee's date of birth.
+     - `Phone Number :` — Enter the employee's phone number.
+     - `State :` — Enter the US state abbreviation (e.g., CA, NY, TX).
+     - `Filing Status :` — Enter the tax filing status (e.g., single, married).
+     - `Income :` — Enter five (5) income values separated by spaces (e.g., 80000 5000 2000 0 0).
+
+3. **Tax Filing and AI Assistant**  
+   - The program will process the tax calculations for each employee and display results.
+   - At the end, you can interactively ask questions to the Gemini AI Assistant:
+     - You will see: `Ask the Gemini tax LLM a question (type 'exit' to quit):`
+     - Type your question or type `exit` to finish.
+
+**You do not need to remember the order of fields**; simply follow the prompts as displayed.
+
+## Example Input/Session
+
+---
+
+Below is a sample session to help you understand the interactive flow:
+
+```plaintext
+Number of Companies : 2
+Company Name : AcmeCorp
+Founder Name : Alice
+Date of Starting : 2000-01-01
+Phone Number : 1234567890
+
+Company Name : BetaTech
+Founder Name : Bob
+Date of Starting : 2010-05-12
+Phone Number : 9876543210
+
+Number of People : 2
+Name : John
+Surname : Doe
+Company Name : AcmeCorp
+Date of Birth : 1985-07-23
+Phone Number : 1112223333
+State : CA
+Filing Status : single
+Income : 80000 5000 2000 0 0
+
+Name : Jane
+Surname : Smith
+Company Name : BetaTech
+Date of Birth : 1990-02-15
+Phone Number : 4445556666
+State : NY
+Filing Status : married
+Income : 90000 6000 3000 0 0
+
+Starting Tax Filing for company AcmeCorp...
+
+Processing: John
+
+API Ninjas response: {"federal_taxes_owed":12000,"fica_total":6120}
+TDS deducted for John. Tax amount: 18120
+
+Finished Tax Filing.
+
+Starting Tax Filing for company BetaTech...
+
+Processing: Jane
+
+API Ninjas response: {"federal_taxes_owed":14000,"fica_total":6890}
+TDS deducted for Jane. Tax amount: 20890
+
+Finished Tax Filing.
+
+Total treasury amount: 39010
+
+Ask the Gemini tax LLM a question (type 'exit' to quit): What are common deductions for US employees?
+Gemini LLM says:
+Common deductions include 401(k) contributions, health insurance premiums, mortgage interest, and charitable donations.
+
+Ask the Gemini tax LLM a question (type 'exit' to quit): exit
+```
+
+**Note:**  
+- All input is prompted interactively; you only need to respond as indicated.
+- You can enter data in any reasonable format as suggested by each prompt.
+- If you make a mistake, you can restart the program and re-enter the data.
 
 ---
