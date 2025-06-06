@@ -51,7 +51,7 @@ Tax-Assistant is a C++ project for simulating an Income Tax Calculator system fe
 Open a terminal in the project directory and run:
 
 ```bash
-g++ tax_assistant.cpp gemini_llm.cpp -o tax_assistant.exe -std=c++17 -I. -lcurl
+g++ tax_assistant.cpp gemini_llm.cpp -o tax_assistant.exe -std=c++17 -I. -static-libstdc++ -static-libgcc libcurl-x64.dll
 ```
 
 - The `-I.` flag includes the current directory for headers.
