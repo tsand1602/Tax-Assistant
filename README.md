@@ -194,5 +194,3 @@ Ask the Gemini tax LLM a question (type 'exit' to quit): exit
 - All input is prompted interactively; you only need to respond as indicated.
 - You can enter data in any reasonable format as suggested by each prompt.
 - If you make a mistake, you can restart the program and re-enter the data.
-
----
